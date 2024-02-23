@@ -1,0 +1,87 @@
+1. Validations using Spring Validators:
+
+@Valid:When Spring boot finds an argument with @Valid,it automatically bootstraps the default JSR 380 implementation - Validator - and validates the argument
+
+When the target argument fails to pass the validation,Spring Boot throws a exception.
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String,String> handleValidationExceptions(MethodArgumentNotValidException ex){
+        Map<String,String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error)->{
+            String fieldName = ((FieldError)error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
+    
+    @ExceptionHandler annotation allows to handle specified types of exceptions through one single method.
+    
+    We specified MethodArgumentNotValidException exception as the exception to be handled.Consequently, Spring boot will call this method when the specified user object is invalid.
+    
+    The method stores the name and post-validation error message of each invalid field put in a map.Next it send the Map back to the client as a JSON representation for further processing.
+    
+    ------------------------------------------------------------------------
+    
+    List of Jakarta Bean Validation's Constraints:
+    
+    1.Email 
+    2.Max
+    3.Min
+    4.NotBlank:The annotated element must not be null and must contain at least one non-whitespace character.Supported type are CharSequence
+    5.NotEmpty:The annotation element must not be null or empty,Supported types are CharSequence,collection,Map,Array
+    6. Pattern:The annotated CharSequence must match the specified boundaries(included).
+    7.Size:Must be between the specified boundaries.
+    
+   -------------------------------------------------------------------------------------------------------------
+   
+   Exception:If any abnormal condition arises will throw an exception.
+   
+
+There are two type of exception:
+    1.Checked
+    2.Unchecked
+    
+    
+    
+    2.Handling Exception in REST
+    
+    @ControllerAdvice is an annotation in spring framework that allows us to consolidate multiple @ExceptionHandler,@InitBinder,@ModelAttribute methods into global controller advice.It allows us to define these method in one or more classes and have them apply to entire application,regardless of which controllers are handling the requests.
+    
+    What @ControllerAdvice class does:
+    
+    Global Exception Handling: We use @ExceptionHandler methods within a @ControllerAdvice class to handle exceptions thrown by controllers across your application.This is particularly useful for handling common exceptions centrally and providing consistent error responses.
+    
+    Handling exceptions in Restful APIs is crucial for providing meaningful error responses to clients and ensuring robustness and reliability of the API.
+    In Spring Boot, you can handle exceptions using @ControllerAdvice along with @ExceptionHandler annotations.
+    
+    Create a custom exception by extending Exception class or RunTimeException class.
+    
+    public class ResourceNotFoundException extends RuntimeException{
+        public ResourceNotFoundException(String message){
+        super(message);
+    }
+    }
+    
+    @ControllerAdvice
+    public class GlobalExceptionHandler{
+    
+        @ExceptionHandler
+        public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    
+    }
+    
+   1.SpringSecurity
+   2.JWT
+   3.OAuth
+   4.RBAC
+   
+   https://collabedit.com/dkuy7
+   
+   
+   
+    
+    
